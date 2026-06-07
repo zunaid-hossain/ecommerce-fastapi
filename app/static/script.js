@@ -1,8 +1,9 @@
 // API Configuration
-const API_BASE = 'http://localhost:8000/api/v1';
+const API_BASE = `${window.location.origin}/api/v1`;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let currentProduct = null;
 let userId = localStorage.getItem('userId') || 1;
+let allProducts = [];
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,6 +21,7 @@ function setupEventListeners() {
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
     document.getElementById('searchInput').addEventListener('input', filterProducts);
     document.getElementById('sortSelect').addEventListener('change', sortProducts);
+    document.addEventListener('click', handleProductClick);
     
     // Modal close
     document.querySelector('.close').addEventListener('click', closeModal);
@@ -33,10 +35,13 @@ function setupEventListeners() {
 async function loadProducts() {
     try {
         const response = await fetch(`${API_BASE}/products/?limit=20`);
+        if (!response.ok) throw new Error(`Products request failed: ${response.status}`);
         const products = await response.json();
-        displayProducts(products, 'productsGrid');
+        allProducts = products;
+        displayProducts(allProducts, 'productsGrid');
     } catch (error) {
         console.error('Error loading products:', error);
+        document.getElementById('productsGrid').innerHTML = emptyState('Failed to load products from the API.');
         showError('Failed to load products');
     }
 }
@@ -45,7 +50,11 @@ async function loadRecommendations() {
     try {
         const response = await fetch(`${API_BASE}/recommendations/personalized?user_id=${userId}&limit=6`);
         const recommendations = await response.json();
-        displayRecommendations(recommendations, 'recommendationsGrid');
+        if (recommendations && recommendations.length > 0) {
+            displayRecommendations(recommendations, 'recommendationsGrid');
+        } else {
+            document.getElementById('recommendationsGrid').innerHTML = emptyState('Browse products to build recommendations.');
+        }
     } catch (error) {
         console.error('Error loading recommendations:', error);
         // Fallback to trending
@@ -63,67 +72,102 @@ async function loadTrendingProducts() {
     }
 }
 
+function handleProductClick(event) {
+    const addButton = event.target.closest('[data-add-id]');
+    if (addButton) {
+        event.stopPropagation();
+        addToCartById(Number(addButton.dataset.addId));
+        return;
+    }
+
+    const productCard = event.target.closest('[data-product-id]');
+    if (productCard) {
+        openProductModal(Number(productCard.dataset.productId));
+    }
+}
+
+function formatPrice(price) {
+    return `$${Number(price || 0).toFixed(2)}`;
+}
+
+function imageUrl(value) {
+    return value || 'https://via.placeholder.com/300x240?text=No+Image';
+}
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[char]));
+}
+
+function emptyState(message) {
+    return `<div class="empty-state">${escapeHtml(message)}</div>`;
+}
+
 function displayProducts(products, gridId) {
     const grid = document.getElementById(gridId);
     if (!products || products.length === 0) {
-        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No products found</p>';
+        grid.innerHTML = emptyState('No products found');
         return;
     }
 
     grid.innerHTML = products.map(product => `
-        <div class="product-card" onclick="openProductModal(${product.id})">
-            <img src="${product.image_url || 'https://via.placeholder.com/250x200?text=No+Image'}" 
-                 alt="${product.name}" class="product-image">
+        <article class="product-card" data-product-id="${product.id}">
+            <div class="product-media">
+                <img src="${imageUrl(product.image_url)}" alt="${escapeHtml(product.name)}" class="product-image" loading="lazy">
+            </div>
             <div class="product-info">
-                <h3 class="product-name">${product.name}</h3>
+                <h3 class="product-name">${escapeHtml(product.name)}</h3>
                 <div class="product-rating">
                     <span class="stars">${renderStars(product.rating || 0)}</span>
                     <span>(${product.rating || 0})</span>
                 </div>
-                <div class="product-price">$${product.price.toFixed(2)}</div>
+                <p class="product-description">${escapeHtml(product.description || '')}</p>
+                <div class="product-price">${formatPrice(product.price)}</div>
                 <div class="product-actions">
                     <button class="btn-view">View Details</button>
-                    <button class="btn-cart" onclick="event.stopPropagation(); addToCartQuick(${product.id}, '${product.name}', ${product.price}, '${product.image_url}')">
+                    <button class="btn-cart" data-add-id="${product.id}" aria-label="Add ${escapeHtml(product.name)} to cart">
                         <i class="fas fa-cart-plus"></i>
                     </button>
                 </div>
             </div>
-        </div>
+        </article>
     `).join('');
 }
 
 function displayRecommendations(recommendations, gridId) {
     const grid = document.getElementById(gridId);
     if (!recommendations || recommendations.length === 0) {
-        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No recommendations available</p>';
+        grid.innerHTML = emptyState('No recommendations available yet');
         return;
     }
 
     grid.innerHTML = recommendations.map(rec => `
-        <div class="product-card" onclick="openProductModal(${rec.id || rec.product_id})">
-            <div style="position: relative;">
-                <img src="${rec.image_url || 'https://via.placeholder.com/250x200?text=No+Image'}" 
-                     alt="${rec.name}" class="product-image">
-                <div style="position: absolute; top: 8px; right: 8px; background: ${rec.reason?.includes('Trending') ? '#f59e0b' : '#10b981'}; color: white; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: bold;">
-                    ${rec.reason || 'Recommended'}
-                </div>
+        <article class="product-card" data-product-id="${rec.id || rec.product_id}">
+            <div class="product-media">
+                <img src="${imageUrl(rec.image_url)}" alt="${escapeHtml(rec.name)}" class="product-image" loading="lazy">
+                <div class="product-badge ${rec.reason?.includes('Trending') ? 'warning' : ''}">${escapeHtml(rec.reason || 'Recommended')}</div>
             </div>
             <div class="product-info">
-                <h3 class="product-name">${rec.name}</h3>
+                <h3 class="product-name">${escapeHtml(rec.name)}</h3>
                 <div class="product-rating">
                     <span class="stars">${renderStars(rec.rating || 0)}</span>
                     <span>(${rec.rating || 0})</span>
                 </div>
-                <div class="product-price">$${rec.price.toFixed(2)}</div>
-                ${rec.confidence ? `<div style="font-size: 0.85rem; color: #6b7280; margin-bottom: 0.5rem;">Confidence: ${(rec.confidence * 100).toFixed(0)}%</div>` : ''}
+                <div class="product-price">${formatPrice(rec.price)}</div>
+                ${rec.confidence ? `<div class="product-confidence">Confidence: ${(rec.confidence * 100).toFixed(0)}%</div>` : ''}
                 <div class="product-actions">
                     <button class="btn-view">View Details</button>
-                    <button class="btn-cart" onclick="event.stopPropagation(); addToCartQuick(${rec.id || rec.product_id}, '${rec.name}', ${rec.price}, '${rec.image_url}')">
+                    <button class="btn-cart" data-add-id="${rec.id || rec.product_id}" aria-label="Add ${escapeHtml(rec.name)} to cart">
                         <i class="fas fa-cart-plus"></i>
                     </button>
                 </div>
             </div>
-        </div>
+        </article>
     `).join('');
 }
 
@@ -140,16 +184,18 @@ function renderStars(rating) {
 async function openProductModal(productId) {
     try {
         const response = await fetch(`${API_BASE}/products/${productId}`);
+        if (!response.ok) throw new Error(`Product request failed: ${response.status}`);
         const product = await response.json();
         currentProduct = product;
 
         document.getElementById('modalTitle').textContent = product.name;
-        document.getElementById('modalImage').src = product.image_url || 'https://via.placeholder.com/400x300?text=No+Image';
+        document.getElementById('modalImage').src = imageUrl(product.image_url);
         document.getElementById('modalDescription').textContent = product.description || 'No description available';
-        document.getElementById('modalPrice').textContent = `$${product.price.toFixed(2)}`;
+        document.getElementById('modalPrice').textContent = formatPrice(product.price);
         document.getElementById('modalRating').textContent = renderStars(product.rating || 0);
         document.getElementById('modalRatingText').textContent = `${product.rating || 0} / 5`;
         document.getElementById('quantity').value = 1;
+        document.getElementById('similarProducts').innerHTML = '';
 
         // Load similar products
         loadSimilarProducts(productId);
@@ -176,9 +222,9 @@ async function loadSimilarProducts(productId) {
                 <div class="similar-items">
                     ${similar.map(item => `
                         <div class="similar-item" onclick="openProductModal(${item.id})">
-                            <img src="${item.image_url || 'https://via.placeholder.com/150x100?text=No+Image'}" alt="${item.name}">
-                            <div class="similar-item-name">${item.name}</div>
-                            <div class="similar-item-price">$${item.price.toFixed(2)}</div>
+                            <img src="${imageUrl(item.image_url)}" alt="${escapeHtml(item.name)}">
+                            <div class="similar-item-name">${escapeHtml(item.name)}</div>
+                            <div class="similar-item-price">${formatPrice(item.price)}</div>
                         </div>
                     `).join('')}
                 </div>
@@ -204,18 +250,27 @@ function closeCart() {
     document.getElementById('cartSidebar').classList.remove('active');
 }
 
-function addToCartQuick(productId, name, price, image) {
+function addToCartById(productId) {
+    const product = allProducts.find(item => item.id === productId) || currentProduct;
+    if (!product || product.id !== productId) {
+        showError('Product is not ready yet');
+        return;
+    }
+    addToCartQuick(product.id, product.name, product.price, product.image_url);
+}
+
+function addToCartQuick(productId, name, price, image, quantity = 1) {
     const existingItem = cart.find(item => item.id === productId);
     
     if (existingItem) {
-        existingItem.quantity += 1;
+        existingItem.quantity += quantity;
     } else {
         cart.push({
             id: productId,
             name,
             price,
             image,
-            quantity: 1
+            quantity
         });
     }
 
@@ -229,7 +284,7 @@ function addToCart() {
     if (!currentProduct) return;
     
     const quantity = parseInt(document.getElementById('quantity').value);
-    addToCartQuick(currentProduct.id, currentProduct.name, currentProduct.price, currentProduct.image_url);
+    addToCartQuick(currentProduct.id, currentProduct.name, currentProduct.price, currentProduct.image_url, quantity);
     
     closeModal();
 }
@@ -249,10 +304,10 @@ function updateCartDisplay() {
         total += itemTotal;
         return `
             <div class="cart-item">
-                <img src="${item.image}" alt="${item.name}" class="cart-item-image">
+                <img src="${imageUrl(item.image)}" alt="${escapeHtml(item.name)}" class="cart-item-image">
                 <div class="cart-item-content">
-                    <div class="cart-item-name">${item.name}</div>
-                    <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+                    <div class="cart-item-name">${escapeHtml(item.name)}</div>
+                    <div class="cart-item-price">${formatPrice(item.price)}</div>
                     <div class="cart-item-quantity">
                         <button onclick="updateQuantity(${index}, -1)">-</button>
                         <span>${item.quantity}</span>
@@ -333,17 +388,6 @@ async function recordInteraction(productId, interactionType, rating = null) {
 }
 
 // ==================== FILTERING & SORTING ====================
-let allProducts = [];
-
-async function loadAllProducts() {
-    try {
-        const response = await fetch(`${API_BASE}/products/?limit=100`);
-        allProducts = await response.json();
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
 function filterProducts() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
     const filtered = allProducts.filter(p => 
@@ -484,6 +528,3 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-// Load all products for filtering
-loadAllProducts();

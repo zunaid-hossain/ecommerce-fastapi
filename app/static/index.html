@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robo&Tech Super Mall - AI-Powered Smart Shopping</title>
+    <title>Smart Store - API-Powered Shopping</title>
     <link rel="stylesheet" href="/static/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -12,12 +12,12 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <i class="fas fa-robot"></i>
-                <span>Robo&Tech Super Mall</span>
+                <i class="fas fa-store"></i>
+                <span>Smart Store</span>
             </div>
             <ul class="nav-menu">
                 <li><a href="#products" class="nav-link">Products</a></li>
-                <li><a href="#recommendations" class="nav-link">AI Recommendations</a></li>
+                <li><a href="#recommendations" class="nav-link">Recommendations</a></li>
                 <li><a href="#trending" class="nav-link">Trending</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
             </ul>
@@ -36,42 +36,39 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h1>Welcome to Robo&Tech Super Mall</h1>
-            <p>Discover cutting-edge robotics & technology with AI-powered smart recommendations</p>
-            <p style="font-size: 0.95rem; margin-top: 0.5rem; opacity: 0.9;">
-                <strong>Hybrid Recommendation Engine:</strong> Collaborative Filtering + Content-Based + Context-Aware + Cold-Start Handling
-            </p>
+            <h1>Shop Live Products From Fake Store API</h1>
+            <p>Browse real API-backed products with ratings, images, cart actions, and personalized recommendations.</p>
             <button class="btn btn-primary" onclick="scrollToProducts()">Shop Now</button>
         </div>
         <div class="hero-image">
-            <img src="https://via.placeholder.com/400x300?text=Robo+Tech" alt="Robotics">
+            <img src="https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg" alt="Featured store product">
         </div>
     </section>
 
     <!-- About Section -->
     <section id="about" class="about-section">
         <div class="container">
-            <h2>About Our Recommendation System</h2>
+            <h2>How Recommendations Work</h2>
             <div class="about-grid">
                 <div class="about-card">
                     <i class="fas fa-brain"></i>
-                    <h3>Collaborative Filtering</h3>
-                    <p>Smart recommendations based on similar users' preferences and purchase history</p>
+                    <h3>Collaborative Signals</h3>
+                    <p>Recommendations improve as shoppers view, add, and purchase products.</p>
                 </div>
                 <div class="about-card">
                     <i class="fas fa-tag"></i>
                     <h3>Content-Based</h3>
-                    <p>Suggests products similar to items you've viewed or purchased before</p>
+                    <p>Suggests products similar to items you've viewed or purchased before.</p>
                 </div>
                 <div class="about-card">
                     <i class="fas fa-trending-up"></i>
                     <h3>Context-Aware</h3>
-                    <p>Considers trending products, popularity, ratings, and current market trends</p>
+                    <p>Considers popularity, ratings, product views, and recent purchase signals.</p>
                 </div>
                 <div class="about-card">
                     <i class="fas fa-star"></i>
                     <h3>Cold-Start Handling</h3>
-                    <p>Personalized recommendations even for new users based on trending products</p>
+                    <p>New visitors still see useful products from the live imported catalog.</p>
                 </div>
             </div>
         </div>
@@ -82,7 +79,7 @@
         <div class="container">
             <h2>All Products</h2>
             <div class="filters">
-                <input type="text" id="searchInput" class="search-box" placeholder="Search robots, gadgets, and tech...">
+                <input type="text" id="searchInput" class="search-box" placeholder="Search products...">
                 <select id="sortSelect" class="sort-select">
                     <option value="latest">Latest Arrivals</option>
                     <option value="price-low">Price: Low to High</option>
@@ -102,8 +99,8 @@
     <!-- Recommendations Section -->
     <section id="recommendations" class="recommendations-section">
         <div class="container">
-            <h2>🤖 Personalized For You</h2>
-            <p class="section-subtitle">AI-powered hybrid recommendations based on your preferences and behavior</p>
+            <h2>Personalized For You</h2>
+            <p class="section-subtitle">Hybrid recommendations based on preferences and browsing behavior.</p>
             <div class="recommendations-grid" id="recommendationsGrid">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -116,8 +113,8 @@
     <!-- Trending Section -->
     <section id="trending" class="trending-section">
         <div class="container">
-            <h2>🔥 Trending Now</h2>
-            <p class="section-subtitle">What's popular this week in the tech world</p>
+            <h2>Trending Now</h2>
+            <p class="section-subtitle">Popular products ranked by views, ratings, and purchases.</p>
             <div class="trending-grid" id="trendingGrid">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -185,8 +182,8 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4><i class="fas fa-robot"></i> Robo&Tech Super Mall</h4>
-                    <p>Your trusted platform for robotics, AI, and cutting-edge technology</p>
+                    <h4><i class="fas fa-store"></i> Smart Store</h4>
+                    <p>API-powered shopping with live products, cart actions, and recommendations.</p>
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>
@@ -198,12 +195,12 @@
                 </div>
                 <div class="footer-section">
                     <h4>Technology</h4>
-                    <p>Powered by FastAPI + Hybrid AI Recommendation Engine</p>
-                    <p style="font-size: 0.85rem; margin-top: 0.5rem;">✓ Collaborative Filtering ✓ Content-Based ✓ Context-Aware ✓ Cold-Start Ready</p>
+                    <p>Powered by FastAPI + Fake Store API + Hybrid Recommendation Engine</p>
+                    <p style="font-size: 0.85rem; margin-top: 0.5rem;">Collaborative Filtering / Content-Based / Context-Aware / Cold-Start Ready</p>
                 </div>
             </div>
             <hr>
-            <p style="text-align: center; margin-top: 1.5rem;">&copy; 2026 Robo&Tech Super Mall. All rights reserved. | AI-Powered Shopping Experience</p>
+            <p style="text-align: center; margin-top: 1.5rem;">&copy; 2026 Smart Store. API-powered shopping experience.</p>
         </div>
     </footer>
 

@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.config import settings
 from app.database import Base, engine
+import app.models  # noqa: F401
 
 # Create tables
 Base.metadata.create_all(bind=engine)

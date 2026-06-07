@@ -28,7 +28,7 @@ class HybridRecommendationEngine:
         """Get personalized recommendations for a user"""
         user = self.db.query(User).filter(User.id == user_id).first()
         if not user:
-            return []
+            return self._get_trending_products(limit)
 
         # Check if user is cold-start (new user)
         user_interactions = self.db.query(UserInteraction).filter(

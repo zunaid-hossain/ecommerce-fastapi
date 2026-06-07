@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from pydantic import field_validator
 from typing import List
 import os
 
@@ -28,6 +29,17 @@ class Settings(BaseSettings):
     MIN_SIMILARITY_THRESHOLD: float = 0.3
     TOP_N_RECOMMENDATIONS: int = 5
     COLD_START_TRENDING_ITEMS: int = 10
+
+    @field_validator("DEBUG", mode="before")
+    @classmethod
+    def parse_debug(cls, value):
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+            if normalized in {"release", "prod", "production", "false", "0", "no", "off"}:
+                return False
+            if normalized in {"debug", "dev", "development", "true", "1", "yes", "on"}:
+                return True
+        return value
     
     class Config:
         env_file = ".env"
