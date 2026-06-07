@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopHub - Smart E-Commerce Platform</title>
+    <title>Robo&Tech Super Mall - AI-Powered Smart Shopping</title>
     <link rel="stylesheet" href="/static/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -12,13 +12,14 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <i class="fas fa-shopping-bag"></i>
-                <span>ShopHub</span>
+                <i class="fas fa-robot"></i>
+                <span>Robo&Tech Super Mall</span>
             </div>
             <ul class="nav-menu">
                 <li><a href="#products" class="nav-link">Products</a></li>
-                <li><a href="#recommendations" class="nav-link">Recommendations</a></li>
+                <li><a href="#recommendations" class="nav-link">AI Recommendations</a></li>
                 <li><a href="#trending" class="nav-link">Trending</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
             </ul>
             <div class="nav-actions">
                 <button class="cart-btn" id="cartBtn">
@@ -35,12 +36,44 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h1>Welcome to ShopHub</h1>
-            <p>Discover products tailored just for you with AI-powered recommendations</p>
+            <h1>Welcome to Robo&Tech Super Mall</h1>
+            <p>Discover cutting-edge robotics & technology with AI-powered smart recommendations</p>
+            <p style="font-size: 0.95rem; margin-top: 0.5rem; opacity: 0.9;">
+                <strong>Hybrid Recommendation Engine:</strong> Collaborative Filtering + Content-Based + Context-Aware + Cold-Start Handling
+            </p>
             <button class="btn btn-primary" onclick="scrollToProducts()">Shop Now</button>
         </div>
         <div class="hero-image">
-            <img src="https://via.placeholder.com/400x300?text=Shopping" alt="Shopping">
+            <img src="https://via.placeholder.com/400x300?text=Robo+Tech" alt="Robotics">
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2>About Our Recommendation System</h2>
+            <div class="about-grid">
+                <div class="about-card">
+                    <i class="fas fa-brain"></i>
+                    <h3>Collaborative Filtering</h3>
+                    <p>Smart recommendations based on similar users' preferences and purchase history</p>
+                </div>
+                <div class="about-card">
+                    <i class="fas fa-tag"></i>
+                    <h3>Content-Based</h3>
+                    <p>Suggests products similar to items you've viewed or purchased before</p>
+                </div>
+                <div class="about-card">
+                    <i class="fas fa-trending-up"></i>
+                    <h3>Context-Aware</h3>
+                    <p>Considers trending products, popularity, ratings, and current market trends</p>
+                </div>
+                <div class="about-card">
+                    <i class="fas fa-star"></i>
+                    <h3>Cold-Start Handling</h3>
+                    <p>Personalized recommendations even for new users based on trending products</p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -49,9 +82,9 @@
         <div class="container">
             <h2>All Products</h2>
             <div class="filters">
-                <input type="text" id="searchInput" class="search-box" placeholder="Search products...">
+                <input type="text" id="searchInput" class="search-box" placeholder="Search robots, gadgets, and tech...">
                 <select id="sortSelect" class="sort-select">
-                    <option value="latest">Latest</option>
+                    <option value="latest">Latest Arrivals</option>
                     <option value="price-low">Price: Low to High</option>
                     <option value="price-high">Price: High to Low</option>
                     <option value="rating">Top Rated</option>
@@ -69,12 +102,12 @@
     <!-- Recommendations Section -->
     <section id="recommendations" class="recommendations-section">
         <div class="container">
-            <h2>Personalized For You</h2>
-            <p class="section-subtitle">AI-powered recommendations based on your preferences</p>
+            <h2>🤖 Personalized For You</h2>
+            <p class="section-subtitle">AI-powered hybrid recommendations based on your preferences and behavior</p>
             <div class="recommendations-grid" id="recommendationsGrid">
                 <div class="loading">
                     <div class="spinner"></div>
-                    <p>Loading recommendations...</p>
+                    <p>Loading AI recommendations...</p>
                 </div>
             </div>
         </div>
@@ -83,8 +116,8 @@
     <!-- Trending Section -->
     <section id="trending" class="trending-section">
         <div class="container">
-            <h2>Trending Now</h2>
-            <p class="section-subtitle">What's popular this week</p>
+            <h2>🔥 Trending Now</h2>
+            <p class="section-subtitle">What's popular this week in the tech world</p>
             <div class="trending-grid" id="trendingGrid">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -131,7 +164,7 @@
     <!-- Cart Sidebar -->
     <div id="cartSidebar" class="cart-sidebar">
         <div class="cart-header">
-            <h3>Shopping Cart</h3>
+            <h3><i class="fas fa-shopping-cart"></i> Shopping Cart</h3>
             <button class="close-btn" onclick="closeCart()">&times;</button>
         </div>
         <div id="cartItems" class="cart-items"></div>
@@ -140,7 +173,9 @@
                 <strong>Total:</strong>
                 <span id="cartTotal">$0.00</span>
             </div>
-            <button class="btn btn-primary btn-block" onclick="checkout()">Checkout</button>
+            <button class="btn btn-primary btn-block" onclick="checkout()">
+                <i class="fas fa-credit-card"></i> Checkout
+            </button>
             <button class="btn btn-secondary btn-block" onclick="closeCart()">Continue Shopping</button>
         </div>
     </div>
@@ -148,8 +183,27 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 ShopHub. All rights reserved.</p>
-            <p>Powered by AI-driven hybrid recommendations</p>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4><i class="fas fa-robot"></i> Robo&Tech Super Mall</h4>
+                    <p>Your trusted platform for robotics, AI, and cutting-edge technology</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#products">Products</a></li>
+                        <li><a href="#recommendations">Recommendations</a></li>
+                        <li><a href="#trending">Trending</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Technology</h4>
+                    <p>Powered by FastAPI + Hybrid AI Recommendation Engine</p>
+                    <p style="font-size: 0.85rem; margin-top: 0.5rem;">✓ Collaborative Filtering ✓ Content-Based ✓ Context-Aware ✓ Cold-Start Ready</p>
+                </div>
+            </div>
+            <hr>
+            <p style="text-align: center; margin-top: 1.5rem;">&copy; 2026 Robo&Tech Super Mall. All rights reserved. | AI-Powered Shopping Experience</p>
         </div>
     </footer>
 
